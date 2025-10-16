@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderRules() {
     const rulesList = document.getElementById('rulesList');
-    
+
     if (!rules || rules.length === 0) {
       rulesList.innerHTML = '<div class="empty-state">暂无规则，去弹窗页面添加吧！</div>';
       return;
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ruleItem.innerHTML = `
         <input type="text" 
                class="rule-field url-field ${rule.enabled !== false ? 'editable' : ''}" 
-               value="${escapedUrl}" 
+               value="${escapedUrl}"
                ${rule.enabled === false ? 'disabled' : ''}>
 
         <input type="text" 
@@ -59,13 +59,90 @@ document.addEventListener('DOMContentLoaded', () => {
 
         <button class="remove-btn">删除</button>
       `;
-      
+
       fragment.appendChild(ruleItem);
     });
 
     rulesList.innerHTML = '';
     rulesList.appendChild(fragment);
   }
+
+  // 导出规则
+  document.getElementById('exportRulesBtn').addEventListener('click', () => {
+    if (!rules || rules.length === 0) {
+      alert('当前没有规则可导出！');
+      return;
+    }
+
+    const dataStr = JSON.stringify(rules, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `tab-renamer-rules-${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+
+    URL.revokeObjectURL(url);
+  });
+
+  // 导入规则
+  document.getElementById('importFile').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async function(event) {
+      try {
+        const importedRules = JSON.parse(event.target.result);
+
+        if (!Array.isArray(importedRules)) {
+          throw new Error('文件格式错误：应为规则数组');
+        }
+
+        // 验证每条规则结构
+        const validRules = importedRules.filter(rule =>
+            rule && typeof rule === 'object' &&
+            typeof rule.urlContains === 'string' &&
+            typeof rule.newTitle === 'string' &&
+            rule.id
+        );
+
+        if (validRules.length === 0) {
+          alert('导入失败：文件中没有有效规则');
+          return;
+        }
+
+        // 合并规则：去重（基于 ID）
+        const existingIds = new Set(rules.map(r => r.id));
+        const newRules = validRules.filter(r => !existingIds.has(r.id));
+
+        if (newRules.length === 0) {
+          alert('所有规则已存在，无需导入');
+          return;
+        }
+
+        rules = [...rules, ...newRules];
+
+        try {
+          await saveRulesToStorage();
+          renderRules();
+          alert(`成功导入 ${newRules.length} 条新规则！`);
+        } catch (error) {
+          alert('保存失败，请重试');
+          console.error('导入后保存失败:', error);
+          loadRules(); // 恢复
+        }
+
+      } catch (err) {
+        alert(`导入失败：${err.message || '文件格式不正确'}`);
+        console.error('导入错误:', err);
+      } finally {
+        e.target.value = ''; // 清空文件选择
+      }
+    };
+    reader.readAsText(file);
+  });
 
   // 事件委托
   document.getElementById('rulesList').addEventListener('click', async (e) => {
