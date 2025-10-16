@@ -1,0 +1,40 @@
+{
+    "manifest_version": 3,
+    "name": "Tab Renamer",
+    "version": "1.2",
+    "description": "根据URL包含的字符自动重命名标签页（支持规则管理）",
+    "permissions": [
+        "tabs",
+        "storage"
+    ],
+    "host_permissions": [
+        "<all_urls>"
+    ],
+    "background":
+    {
+        "service_worker": "background.js"
+    },
+    "action":
+    {
+        "default_popup": "popup.html",
+        "default_title": "Tab Renamer"
+    },
+    "options_page": "options.html",
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "content.js"
+            ],
+            "run_at": "document_start"
+        }
+    ],
+    "icons":
+    {
+        "16": "icon.png",
+        "48": "icon.png",
+        "128": "icon.png"
+    }
+}

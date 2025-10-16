@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Tab Renamer</title>
+  <style>
+    body { 
+      width: 300px; 
+      padding: 20px; 
+      font-family: Arial, sans-serif; 
+      margin: 0 auto;
+    }
+    input, button { 
+      margin: 5px 0; 
+      padding: 8px; 
+      width: 100%; 
+      box-sizing: border-box;
+    }
+    .error { 
+      color: red; 
+      font-size: 14px; 
+      margin: 10px 0; 
+    }
+    h3 { 
+      margin-top: 20px; 
+      margin-bottom: 10px; 
+      border-bottom: 1px solid #eee;
+      padding-bottom: 5px;
+    }
+    .rule-item { 
+      padding: 10px; 
+      border: 1px solid #eee; 
+      border-radius: 4px; 
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+    .rule-info { 
+      word-break: break-all; 
+    }
+    .remove-btn { 
+      float: right; 
+      background: #ea4335; 
+      color: white; 
+      border: none; 
+      padding: 2px 6px; 
+      border-radius: 3px; 
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h2>添加规则</h2>
+  
+  <label>URL 包含字符:</label>
+  <input type="text" id="urlContains" placeholder="例如: youtube.com">
+
+  <label>新标签名称:</label>
+  <input type="text" id="newTitle" placeholder="例如: 📺 YouTube">
+
+  <button id="addRuleBtn">添加规则</button>
+  <button id="manageRulesBtn">管理所有规则</button>
+  <button id="refreshBtn">刷新列表</button>
+
+  <div id="error" class="error"></div>
+
+<!--   <h3>现有规则:</h3>
+  <div id="rulesList"></div> -->
+
+  <script src="popup.js"></script>
+</body>
+</html>
