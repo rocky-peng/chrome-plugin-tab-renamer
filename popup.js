@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function loadRules() {
     chrome.runtime.sendMessage({ action: 'getRules' }, (response) => {
       if (response && response.rules) {
-        rulesList.innerHTML = '';
+        // rulesList.innerHTML = '';
         response.rules.forEach(rule => {
           const ruleItem = document.createElement('div');
           ruleItem.className = 'rule-item';

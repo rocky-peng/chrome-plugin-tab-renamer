@@ -4,11 +4,24 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Tab Renamer</title>
-  <!-- Google Fonts: Noto Sans SC -->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
-  <!-- Font Awesome Free Icons -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
+    :root {
+      --primary: #1a73e8;
+      --primary-dark: #1767cc;
+      --success: #34a853;
+      --success-dark: #2d9045;
+      --danger: #ea4335;
+      --gray-light: #f9fafa;
+      --gray-medium: #e0e0e0;
+      --gray-dark: #5f6368;
+      --text: #333;
+      --text-light: #666;
+      --radius: 12px;
+      --transition: all 0.3s ease;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -16,70 +29,109 @@
     }
 
     body {
-      width: 450px;
-      min-height: 400px;
+      width: 480px;
+      min-height: 420px;
       font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
-      background: #f9fafa;
-      color: #333;
+      background: linear-gradient(135deg, #f9fafa 0%, #eef0f1 100%);
+      color: var(--text);
       margin: 0 auto;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      padding: 24px;
+      border-radius: var(--radius);
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12);
+      position: relative;
+      overflow: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--success), var(--danger));
+      border-radius: var(--radius) var(--radius) 0 0;
     }
 
     h2 {
-      font-size: 1.4em;
+      font-size: 1.5em;
       font-weight: 600;
-      color: #1a73e8;
-      margin-bottom: 16px;
+      color: var(--primary);
+      margin-bottom: 20px;
       text-align: center;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .input-group {
+      margin-bottom: 18px;
+      position: relative;
     }
 
     label {
       display: block;
-      font-size: 0.9em;
-      color: #555;
-      margin: 12px 0 6px 0;
+      font-size: 0.95em;
+      color: var(--text);
+      margin: 0 0 8px 0;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     input[type="text"] {
       width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #ddd;
+      padding: 12px 16px;
+      border: 1px solid var(--gray-medium);
       border-radius: 8px;
       font-size: 14px;
-      transition: border 0.3s ease, box-shadow 0.3s ease;
+      transition: var(--transition);
+      background: white;
     }
 
     input[type="text"]:focus {
       outline: none;
-      border-color: #1a73e8;
-      box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.15);
+    }
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 20px 0;
     }
 
     button {
-      background: #1a73e8;
+      background: var(--primary);
       color: white;
       border: none;
-      padding: 10px 16px;
+      padding: 12px 18px;
       border-radius: 8px;
       font-size: 14px;
       font-weight: 500;
       cursor: pointer;
-      margin-top: 10px;
-      transition: background 0.3s ease;
+      transition: var(--transition);
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     }
 
     button:hover {
-      background: #1767cc;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    button:active {
+      transform: translateY(0);
     }
 
     button#refreshBtn {
-      background: #5f6368;
+      background: var(--gray-dark);
     }
 
     button#refreshBtn:hover {
@@ -87,64 +139,79 @@
     }
 
     button#manageRulesBtn {
-      background: #34a853;
+      background: var(--success);
     }
 
     button#manageRulesBtn:hover {
-      background: #2d9045;
+      background: var(--success-dark);
     }
 
     .error {
-      color: #ea4335;
+      color: var(--danger);
       font-size: 13px;
-      margin: 10px 0;
-      padding: 8px;
+      margin: 15px 0;
+      padding: 12px;
       background: #fce8e6;
-      border-radius: 6px;
+      border-radius: 8px;
       border: 1px solid #f1a8a0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .rules-section {
+      margin-top: 20px;
     }
 
     h3 {
-      margin: 20px 0 10px 0;
+      margin: 0 0 12px 0;
       font-size: 1.1em;
-      color: #333;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 5px;
+      color: var(--text);
       font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .rules-list {
-      max-height: 200px;
+      max-height: 180px;
       overflow-y: auto;
       margin-top: 10px;
     }
 
     .rule-item {
       background: white;
-      padding: 12px;
+      padding: 14px;
       border-radius: 8px;
-      margin-bottom: 8px;
-      border: 1px solid #e0e0e0;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      margin-bottom: 10px;
+      border: 1px solid var(--gray-medium);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
       position: relative;
+      transition: var(--transition);
+    }
+
+    .rule-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
 
     .rule-info {
       font-size: 14px;
       line-height: 1.5;
       word-break: break-all;
-      color: #555;
+      color: var(--text-light);
+      padding-right: 30px;
     }
 
     .rule-info strong {
-      color: #333;
+      color: var(--text);
     }
 
     .remove-btn {
       position: absolute;
-      top: 10px;
-      right: 10px;
-      background: #ea4335;
+      top: 12px;
+      right: 12px;
+      background: var(--danger);
       color: white;
       border: none;
       width: 28px;
@@ -156,7 +223,7 @@
       justify-content: center;
       cursor: pointer;
       opacity: 0;
-      transition: opacity 0.2s;
+      transition: var(--transition);
     }
 
     .rule-item:hover .remove-btn {
@@ -164,14 +231,17 @@
     }
 
     .rule-item:hover .remove-btn:hover {
-      background: #d33027;
+      background: var(--danger-dark);
+      transform: scale(1.05);
     }
 
     .footer {
       margin-top: 20px;
       text-align: center;
       font-size: 13px;
-      color: #666;
+      color: var(--text-light);
+      padding-top: 15px;
+      border-top: 1px solid var(--gray-medium);
     }
 
     /* 滚动条美化 */
@@ -185,29 +255,38 @@
     }
 
     ::-webkit-scrollbar-thumb {
-      background: #ccc;
+      background: #c1c1c1;
       border-radius: 10px;
     }
 
     ::-webkit-scrollbar-thumb:hover {
-      background: #aaa;
+      background: #a8a8a8;
     }
   </style>
 </head>
 <body>
 <h2><i class="fas fa-tag"></i> 添加规则</h2>
 
-<label for="urlContains"><i class="fas fa-link"></i> URL 包含字符</label>
-<input type="text" id="urlContains" placeholder="例如: youtube.com/watch">
+<div class="input-group">
+  <label for="urlContains"><i class="fas fa-link"></i> URL 包含字符</label>
+  <input type="text" id="urlContains" placeholder="例如: youtube.com/watch">
+</div>
 
-<label for="newTitle"><i class="fas fa-edit"></i> 新标签名称</label>
-<input type="text" id="newTitle" placeholder="例如: 📺 YouTube 视频">
+<div class="input-group">
+  <label for="newTitle"><i class="fas fa-edit"></i> 新标签名称</label>
+  <input type="text" id="newTitle" placeholder="例如: 📺 YouTube 视频">
+</div>
 
-<button id="addRuleBtn"><i class="fas fa-plus"></i> 添加规则</button>
-<button id="manageRulesBtn"><i class="fas fa-cog"></i> 管理所有规则</button>
-<button id="refreshBtn"><i class="fas fa-sync-alt"></i> 刷新列表</button>
+<div class="buttons">
+  <button id="addRuleBtn"><i class="fas fa-plus"></i> 添加规则</button>
+  <button id="manageRulesBtn"><i class="fas fa-cog"></i> 管理所有规则</button>
+  <button id="refreshBtn"><i class="fas fa-sync-alt"></i> 刷新列表</button>
+</div>
 
-<div id="error" class="error" style="display:none;"></div>
+<div id="error" class="error" style="display:none;">
+  <i class="fas fa-exclamation-circle"></i>
+  <span id="errorText"></span>
+</div>
 
 <div class="footer">
   支持通配、参数匹配，按域名自动排序
