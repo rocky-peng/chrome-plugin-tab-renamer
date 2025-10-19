@@ -1,71 +1,218 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Tab Renamer</title>
+  <!-- Google Fonts: Noto Sans SC -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome Free Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
-    body { 
-      width: 300px; 
-      padding: 20px; 
-      font-family: Arial, sans-serif; 
-      margin: 0 auto;
-    }
-    input, button { 
-      margin: 5px 0; 
-      padding: 8px; 
-      width: 100%; 
+    * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
-    .error { 
-      color: red; 
-      font-size: 14px; 
-      margin: 10px 0; 
+
+    body {
+      width: 450px;
+      min-height: 400px;
+      font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+      background: #f9fafa;
+      color: #333;
+      margin: 0 auto;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
-    h3 { 
-      margin-top: 20px; 
-      margin-bottom: 10px; 
+
+    h2 {
+      font-size: 1.4em;
+      font-weight: 600;
+      color: #1a73e8;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      font-size: 0.9em;
+      color: #555;
+      margin: 12px 0 6px 0;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #1a73e8;
+      box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+    }
+
+    button {
+      background: #1a73e8;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    button:hover {
+      background: #1767cc;
+    }
+
+    button#refreshBtn {
+      background: #5f6368;
+    }
+
+    button#refreshBtn:hover {
+      background: #4c5156;
+    }
+
+    button#manageRulesBtn {
+      background: #34a853;
+    }
+
+    button#manageRulesBtn:hover {
+      background: #2d9045;
+    }
+
+    .error {
+      color: #ea4335;
+      font-size: 13px;
+      margin: 10px 0;
+      padding: 8px;
+      background: #fce8e6;
+      border-radius: 6px;
+      border: 1px solid #f1a8a0;
+    }
+
+    h3 {
+      margin: 20px 0 10px 0;
+      font-size: 1.1em;
+      color: #333;
       border-bottom: 1px solid #eee;
       padding-bottom: 5px;
+      font-weight: 500;
     }
-    .rule-item { 
-      padding: 10px; 
-      border: 1px solid #eee; 
-      border-radius: 4px; 
-      margin-bottom: 5px;
+
+    .rules-list {
+      max-height: 200px;
+      overflow-y: auto;
+      margin-top: 10px;
+    }
+
+    .rule-item {
+      background: white;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      border: 1px solid #e0e0e0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      position: relative;
+    }
+
+    .rule-info {
       font-size: 14px;
+      line-height: 1.5;
+      word-break: break-all;
+      color: #555;
     }
-    .rule-info { 
-      word-break: break-all; 
+
+    .rule-info strong {
+      color: #333;
     }
-    .remove-btn { 
-      float: right; 
-      background: #ea4335; 
-      color: white; 
-      border: none; 
-      padding: 2px 6px; 
-      border-radius: 3px; 
+
+    .remove-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #ea4335;
+      color: white;
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .rule-item:hover .remove-btn {
+      opacity: 1;
+    }
+
+    .rule-item:hover .remove-btn:hover {
+      background: #d33027;
+    }
+
+    .footer {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 13px;
+      color: #666;
+    }
+
+    /* 滚动条美化 */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #ccc;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #aaa;
     }
   </style>
 </head>
 <body>
-  <h2>添加规则</h2>
-  
-  <label>URL 包含字符:</label>
-  <input type="text" id="urlContains" placeholder="例如: youtube.com">
+<h2><i class="fas fa-tag"></i> 添加规则</h2>
 
-  <label>新标签名称:</label>
-  <input type="text" id="newTitle" placeholder="例如: 📺 YouTube">
+<label for="urlContains"><i class="fas fa-link"></i> URL 包含字符</label>
+<input type="text" id="urlContains" placeholder="例如: youtube.com/watch">
 
-  <button id="addRuleBtn">添加规则</button>
-  <button id="manageRulesBtn">管理所有规则</button>
-  <button id="refreshBtn">刷新列表</button>
+<label for="newTitle"><i class="fas fa-edit"></i> 新标签名称</label>
+<input type="text" id="newTitle" placeholder="例如: 📺 YouTube 视频">
 
-  <div id="error" class="error"></div>
+<button id="addRuleBtn"><i class="fas fa-plus"></i> 添加规则</button>
+<button id="manageRulesBtn"><i class="fas fa-cog"></i> 管理所有规则</button>
+<button id="refreshBtn"><i class="fas fa-sync-alt"></i> 刷新列表</button>
 
-<!--   <h3>现有规则:</h3>
-  <div id="rulesList"></div> -->
+<div id="error" class="error" style="display:none;"></div>
 
-  <script src="popup.js"></script>
+<div class="footer">
+  支持通配、参数匹配，按域名自动排序
+</div>
+
+<script src="popup.js"></script>
 </body>
 </html>
